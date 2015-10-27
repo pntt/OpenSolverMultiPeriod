@@ -23,26 +23,24 @@ For i = 1 To consNum
     Else
         Set consLHS = Union(consLHS, OpenSolver.GetConstraintLhs((i), SolverSheet))
     End If
-    MsgBox "consLHS: " + consLHS.Address
 
     If consRHS Is Nothing Then
         Set consRHS = OpenSolver.GetConstraintRhs((i), (rhsString), (rhsDouble), False, SolverSheet)
     Else
         Set consRHS = Union(consRHS, OpenSolver.GetConstraintRhs((i), (rhsString), (rhsDouble), False, SolverSheet))
     End If
-    
-    
-    MsgBox "consRHS: " + consRHS.Address
-    
-    
+  
 Next i
 
+startPeriod = 1
+stepSize = 5
 
-'MsgBox consLHS.Address
-'MsgBox consRHS.Address
+For j = 1 To consNum
+    OpenSolver.SetConstraintLhs (j), consLHS.Areas((startPeriod)).Columns(1).Resize(, stepSize), SolverSheet
+    Dim someString As String
     
-    
-
+    OpenSolver.SetConstraintRhs (j), consLHS.Areas((j)).Columns(startPeriod).Resize(, stepSize), someString, SolverSheet
+Next j
 
 End Sub
 
