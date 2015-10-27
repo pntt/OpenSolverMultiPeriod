@@ -7,11 +7,9 @@ Set SolverSheet = Sheets("ProcessingSchedule")
 Dim myVars As Range
 Set myVars = OpenSolver.GetDecisionVariables(SolverSheet)
 
-MsgBox myVars.Areas.Count
-MsgBox myVars.Address
-
 solvePeriods = 34
 solvePeriodStep = 10
+
 counter = 1
 
 
@@ -21,9 +19,9 @@ Dim solverVars As Range
 Set solverVars = Nothing
 
 If (j + solvePeriodStep) > solvePeriods Then
-    step = solvePeriods - j + 1
+    Step = solvePeriods - j + 1
 Else
-    step = solvePeriodStep
+    Step = solvePeriodStep
 End If
 
     For i = 1 To myVars.Areas.Count
@@ -31,9 +29,9 @@ End If
         Set currRange = myVars.Areas(i)
         
         If solverVars Is Nothing Then
-            Set solverVars = currRange.Columns(j).Resize(, step)
+            Set solverVars = currRange.Columns(j).Resize(, Step)
         Else
-            Set solverVars = Union(solverVars, currRange.Columns(j).Resize(, step))
+            Set solverVars = Union(solverVars, currRange.Columns(j).Resize(, Step))
         End If
             
         Sheets("OSOut").Cells(i, 2 + counter) = solverVars.Areas(i).Address
