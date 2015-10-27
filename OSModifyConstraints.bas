@@ -32,15 +32,28 @@ For i = 1 To consNum
   
 Next i
 
+MsgBox consLHS.Areas.Count
+MsgBox consRHS.Areas.Count
+
 startPeriod = 1
 stepSize = 5
 
-For j = 1 To consNum
-    OpenSolver.SetConstraintLhs (j), consLHS.Areas((j)).Columns(startPeriod).Resize(, stepSize), SolverSheet
+For k = 1 To consNum
+    OpenSolver.SetConstraintLhs (k), consLHS.Areas((k)).Columns(startPeriod).Resize(, stepSize), SolverSheet
     Dim someString As String
     
-    OpenSolver.SetConstraintRhs (j), consLHS.Areas((j)).Columns(startPeriod).Resize(, stepSize), someString, SolverSheet
-Next j
+    OpenSolver.SetConstraintRhs (k), consRHS.Areas((k)).Columns(startPeriod).Resize(, stepSize), (someString), SolverSheet
+Next k
+
+
+'Reset OpenSolver constraints to original
+For k = 1 To consNum
+    OpenSolver.SetConstraintLhs (k), consLHS.Areas((k)), SolverSheet
+    
+   
+    OpenSolver.SetConstraintRhs (k), consRHS.Areas((k)), (someString), SolverSheet
+    
+Next k
 
 End Sub
 
