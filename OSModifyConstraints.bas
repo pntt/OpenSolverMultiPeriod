@@ -36,7 +36,7 @@ startPeriod = 1
 stepSize = 5
 
 For j = 1 To consNum
-    OpenSolver.SetConstraintLhs (j), consLHS.Areas((startPeriod)).Columns(1).Resize(, stepSize), SolverSheet
+    OpenSolver.SetConstraintLhs (j), consLHS.Areas((j)).Columns(startPeriod).Resize(, stepSize), SolverSheet
     Dim someString As String
     
     OpenSolver.SetConstraintRhs (j), consLHS.Areas((j)).Columns(startPeriod).Resize(, stepSize), someString, SolverSheet
