@@ -27,36 +27,42 @@ For i = 1 To consNum
 Next i
 
 'For debugging - make sure both are equal
-MsgBox consLHS.Areas.Count
-MsgBox consRHS.Areas.Count
+MsgBox "Unique LHS Constraints: " & consLHS.Areas.Count
+MsgBox "Unique RHS Constraints: " & consRHS.Areas.Count
 
 startPeriod = 1
 stepSize = 5
 
 Dim newLHS As Range
 Dim newRHS As Range
+Dim relation As RelationConsts
 
 For k = 1 To consNum
     Set newLHS = consLHS.Areas((k)).Columns(startPeriod).Resize(, stepSize)
-    OpenSolver.SetConstraintLhs (k), newLHS, SolverSheet
-    
     Set newRHS = consRHS.Areas((k)).Columns(startPeriod).Resize(, stepSize)
-    Dim someString As String
-    OpenSolver.SetConstraintRhs (k), newRHS, (someString), SolverSheet
+    relation = OpenSolver.GetConstraintRel((k), SolverSheet)
+    
+    OpenSolver.UpdateConstraint (k), newLHS, relation, newRHS, Sheet:=SolverSheet
+    
+    'Msgbox debugging
+    'MsgBox "LHS: " + newLHS.Address + " RHS: " & newRHS.Address
+    'MsgBox "LHS: " & OpenSolver.GetConstraintLhs((k), SolverSheet).Address
+    
+    
 Next k
 
-'Output to OSOut sheet for debugging
+'Output constraints to OSOut sheet for debugging
 For m = 1 To consNum
-    Sheets("OSOut").Cells(50 + m - 1, 1) = consLHS.Areas((m)).Address
-    Sheets("OSOut").Cells(50 + m - 1, 2) = consRHS.Areas((m)).Address
+    Sheets("OSOut").Cells(50 + m - 1, 1) = OpenSolver.GetConstraintLhs((i), SolverSheet).Address
+    Sheets("OSOut").Cells(50 + m - 1, 2) = OpenSolver.GetConstraintRhs((i), (rhsString), (rhsDouble), False, SolverSheet).Address
 Next m
 
 'Reset OpenSolver constraints to original
 For k = 1 To consNum
     OpenSolver.SetConstraintLhs (k), consLHS.Areas((k)), SolverSheet
-       
+
     OpenSolver.SetConstraintRhs (k), consRHS.Areas((k)), (someString), SolverSheet
-    
+
 Next k
 
 End Sub
