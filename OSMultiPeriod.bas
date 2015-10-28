@@ -4,8 +4,6 @@ Sub OSClearVars()
 OpenSolver.GetDecisionVariables.ClearContents
 
 End Sub
-
-
 Sub OSMultiPeriod()
 
 Dim SolverSheet As Worksheet
@@ -41,9 +39,6 @@ Next i
 solvePeriods = 2
 solvePeriodStep = 1
 
-'Counter for output decision variables to OSOut (for debugging)
-counter = 1
-
 For j = 1 To solvePeriods Step solvePeriodStep
 
     Dim solverVars As Range
@@ -65,9 +60,6 @@ For j = 1 To solvePeriods Step solvePeriodStep
         Else
             Set solverVars = Union(solverVars, currRange.Columns(j).Resize(, Step))
         End If
-            
-        'Output decision variables to OSOut sheet for debugging
-        Sheets("OSOut").Cells(i, 2 + counter) = solverVars.Areas(i).Address
     Next i
     
     'Set OpenSolver decision variables
@@ -88,9 +80,6 @@ For j = 1 To solvePeriods Step solvePeriodStep
 
     'Solve OpenSolver model
     OpenSolver.RunOpenSolver Sheet:=SolverSheet
-    
-    counter = counter + 1
-    
 Next j
 
 'Reset OpenSolver decision variables to the original
