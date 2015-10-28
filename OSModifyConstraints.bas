@@ -46,15 +46,13 @@ For k = 1 To consNum
     
     'Msgbox debugging
     'MsgBox "LHS: " + newLHS.Address + " RHS: " & newRHS.Address
-    'MsgBox "LHS: " & OpenSolver.GetConstraintLhs((k), SolverSheet).Address
-    
-    
+    MsgBox "LHS: " & OpenSolver.GetConstraintLhs((k), SolverSheet).Address
 Next k
 
 'Output constraints to OSOut sheet for debugging
 For m = 1 To consNum
-    Sheets("OSOut").Cells(50 + m - 1, 1) = OpenSolver.GetConstraintLhs((i), SolverSheet).Address
-    Sheets("OSOut").Cells(50 + m - 1, 2) = OpenSolver.GetConstraintRhs((i), (rhsString), (rhsDouble), False, SolverSheet).Address
+    Sheets("OSOut").Cells(50 + m - 1, 1) = OpenSolver.GetConstraintLhs((m), SolverSheet).Address
+    Sheets("OSOut").Cells(50 + m - 1, 2) = OpenSolver.GetConstraintRhs((m), (rhsString), (rhsDouble), False, SolverSheet).Address
 Next m
 
 'Reset OpenSolver constraints to original
