@@ -33,9 +33,9 @@ For i = 1 To consNum
     End If
 Next i
 
-'Total solve periods and solve groups - add to GUI later
-solvePeriods = 2
-solvePeriodStep = 1
+'Total solve periods and solve groups. Temporarily set to some quick config cells and buttons. Tidy up later!
+solvePeriods = Sheets("OSMultiPeriodSolve").Range("$C$3").Value
+solvePeriodStep = Sheets("OSMultiPeriodSolve").Range("$C$4").Value
 
 For j = 1 To solvePeriods Step solvePeriodStep
 
