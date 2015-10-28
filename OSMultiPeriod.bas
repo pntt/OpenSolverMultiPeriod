@@ -1,13 +1,11 @@
 Attribute VB_Name = "OSMultiPeriod"
-Sub OSClearVars()
-
-OpenSolver.GetDecisionVariables.ClearContents
-
-End Sub
 Sub OSMultiPeriod()
 
 Dim SolverSheet As Worksheet
 Set SolverSheet = Sheets("ProcessingSchedule")
+
+'Clear values for decision cells
+OpenSolver.GetDecisionVariables(SolverSheet).ClearContents
 
 'Store original decision variables
 Dim myVars As Range
