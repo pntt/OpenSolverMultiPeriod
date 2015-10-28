@@ -15,17 +15,19 @@ counter = 1
 
 For j = 1 To solvePeriods Step solvePeriodStep
 
-Dim solverVars As Range
-Set solverVars = Nothing
-
-If (j + solvePeriodStep) > solvePeriods Then
-    Step = solvePeriods - j + 1
-Else
-    Step = solvePeriodStep
-End If
-
-    For i = 1 To myVars.Areas.Count
+    Dim solverVars As Range
+    Set solverVars = Nothing
     
+    'Modify step so it does not exceed total solve periods
+    If (j + solvePeriodStep) > solvePeriods Then
+        Step = solvePeriods - j + 1
+    Else
+        Step = solvePeriodStep
+    End If
+
+
+    'Modify each decision variable range to match current solve time period
+    For i = 1 To myVars.Areas.Count
         Set currRange = myVars.Areas(i)
         
         If solverVars Is Nothing Then
@@ -35,8 +37,6 @@ End If
         End If
             
         Sheets("OSOut").Cells(i, 2 + counter) = solverVars.Areas(i).Address
-        
-    
     Next i
     
     'Set OpenSolver decision variables
