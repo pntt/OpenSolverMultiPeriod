@@ -1,5 +1,12 @@
 Attribute VB_Name = "OSMultiPeriod"
-Sub test()
+Sub OSClearVars()
+
+OpenSolver.GetDecisionVariables.ClearContents
+
+End Sub
+
+
+Sub OSMultiPeriod()
 
 Dim SolverSheet As Worksheet
 Set SolverSheet = Sheets("ProcessingSchedule")
@@ -8,9 +15,31 @@ Set SolverSheet = Sheets("ProcessingSchedule")
 Dim myVars As Range
 Set myVars = OpenSolver.GetDecisionVariables(SolverSheet)
 
+'Number of constraints
+Dim consNum As Long
+consNum = OpenSolver.GetNumConstraints(SolverSheet)
+
+'Store original contraints
+Dim consLHS As Range
+Dim consRHS As Range
+
+For i = 1 To consNum
+    If consLHS Is Nothing Then
+        Set consLHS = OpenSolver.GetConstraintLhs((i), SolverSheet)
+    Else
+        Set consLHS = Union(consLHS, OpenSolver.GetConstraintLhs((i), SolverSheet))
+    End If
+
+    If consRHS Is Nothing Then
+        Set consRHS = OpenSolver.GetConstraintRhs((i), (rhsString), (rhsDouble), False, SolverSheet)
+    Else
+        Set consRHS = Union(consRHS, OpenSolver.GetConstraintRhs((i), (rhsString), (rhsDouble), False, SolverSheet))
+    End If
+Next i
+
 'Total solve periods and solve groups - add to GUI later
-solvePeriods = 34
-solvePeriodStep = 10
+solvePeriods = 2
+solvePeriodStep = 1
 
 'Counter for output decision variables to OSOut (for debugging)
 counter = 1
@@ -26,7 +55,6 @@ For j = 1 To solvePeriods Step solvePeriodStep
     Else
         Step = solvePeriodStep
     End If
-
 
     'Modify each decision variable range to match current solve time period
     For i = 1 To myVars.Areas.Count
@@ -44,6 +72,19 @@ For j = 1 To solvePeriods Step solvePeriodStep
     
     'Set OpenSolver decision variables
     OpenSolver.SetDecisionVariables solverVars, Sheet:=SolverSheet
+    
+    'Update OpenSolver constraints
+    Dim newLHS As Range
+    Dim newRHS As Range
+    Dim relation As RelationConsts
+    
+    For k = 1 To consNum
+        Set newLHS = consLHS.Areas((k)).Columns(j).Resize(, Step)
+        Set newRHS = consRHS.Areas((k)).Columns(j).Resize(, Step)
+        relation = OpenSolver.GetConstraintRel((k), SolverSheet)
+        
+        OpenSolver.UpdateConstraint (k), newLHS, relation, newRHS, Sheet:=SolverSheet
+    Next k
 
     'Solve OpenSolver model
     OpenSolver.RunOpenSolver Sheet:=SolverSheet
@@ -54,7 +95,14 @@ Next j
 
 'Reset OpenSolver decision variables to the original
 OpenSolver.SetDecisionVariables myVars, Sheet:=SolverSheet
-    
+
+'Reset OpenSolver constraints to original
+For k = 1 To consNum
+    OpenSolver.SetConstraintLhs (k), consLHS.Areas((k)), SolverSheet
+
+    OpenSolver.SetConstraintRhs (k), consRHS.Areas((k)), (someString), SolverSheet
+Next k
+
 End Sub
 
 
