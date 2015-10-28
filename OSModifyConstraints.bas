@@ -26,10 +26,6 @@ For i = 1 To consNum
     End If
 Next i
 
-'For debugging - make sure both are equal
-MsgBox "Unique LHS Constraints: " & consLHS.Areas.Count
-MsgBox "Unique RHS Constraints: " & consRHS.Areas.Count
-
 startPeriod = 1
 stepSize = 5
 
@@ -44,16 +40,7 @@ For k = 1 To consNum
     
     OpenSolver.UpdateConstraint (k), newLHS, relation, newRHS, Sheet:=SolverSheet
     
-    'Msgbox debugging
-    'MsgBox "LHS: " + newLHS.Address + " RHS: " & newRHS.Address
-    MsgBox "LHS: " & OpenSolver.GetConstraintLhs((k), SolverSheet).Address
 Next k
-
-'Output constraints to OSOut sheet for debugging
-For m = 1 To consNum
-    Sheets("OSOut").Cells(50 + m - 1, 1) = OpenSolver.GetConstraintLhs((m), SolverSheet).Address
-    Sheets("OSOut").Cells(50 + m - 1, 2) = OpenSolver.GetConstraintRhs((m), (rhsString), (rhsDouble), False, SolverSheet).Address
-Next m
 
 'Reset OpenSolver constraints to original
 For k = 1 To consNum
