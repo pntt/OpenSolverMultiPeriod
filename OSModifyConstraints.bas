@@ -4,10 +4,6 @@ Sub OSModifyConstraints()
 Dim SolverSheet As Worksheet
 Set SolverSheet = Sheets("ProcessingSchedule")
 
-'MsgBox OpenSolver.GetConstraintLhs(2, SolverSheet).Address
-
-'MsgBox OpenSolver.GetConstraintLhs(2, SolverSheet).Columns(1).Resize(, 10).Address
-
 'Number of constraints
 Dim consNum As Long
 consNum = OpenSolver.GetNumConstraints(SolverSheet)
@@ -15,7 +11,6 @@ consNum = OpenSolver.GetNumConstraints(SolverSheet)
 'Store original contraints
 Dim consLHS As Range
 Dim consRHS As Range
-
 
 For i = 1 To consNum
     If consLHS Is Nothing Then
@@ -29,9 +24,9 @@ For i = 1 To consNum
     Else
         Set consRHS = Union(consRHS, OpenSolver.GetConstraintRhs((i), (rhsString), (rhsDouble), False, SolverSheet))
     End If
-  
 Next i
 
+'For debugging - make sure both are equal
 MsgBox consLHS.Areas.Count
 MsgBox consRHS.Areas.Count
 
@@ -40,7 +35,6 @@ stepSize = 5
 
 Dim newLHS As Range
 Dim newRHS As Range
-
 
 For k = 1 To consNum
     Set newLHS = consLHS.Areas((k)).Columns(startPeriod).Resize(, stepSize)
@@ -56,9 +50,6 @@ For m = 1 To consNum
     Sheets("OSOut").Cells(50 + m - 1, 1) = consLHS.Areas((m)).Address
     Sheets("OSOut").Cells(50 + m - 1, 2) = consRHS.Areas((m)).Address
 Next m
-
-
-
 
 'Reset OpenSolver constraints to original
 For k = 1 To consNum
