@@ -34,19 +34,20 @@ For i = 1 To consNum
 Next i
 
 'Total solve periods and solve groups. Temporarily set to some quick config cells and buttons. Tidy up later!
-solvePeriods = Sheets("OSMultiPeriodSolve").Range("$C$3").Value
+startPeriod = Sheets("OSMultiPeriodSolve").Range("$C$2").Value
+endPeriod = Sheets("OSMultiPeriodSolve").Range("$C$3").Value
 solvePeriodStep = Sheets("OSMultiPeriodSolve").Range("$C$4").Value
 
-For j = 1 To solvePeriods Step solvePeriodStep
+For j = startPeriod To endPeriod Step solvePeriodStep
 
     Dim solverVars As Range
     Set solverVars = Nothing
     
     'Modify step so it does not exceed total solve periods
-    If (j + solvePeriodStep) > solvePeriods Then
-        Step = solvePeriods - j + 1
+    If (j + solvePeriodStep - 1) > endPeriod Then
+        pStep = endPeriod - j + 1
     Else
-        Step = solvePeriodStep
+        pStep = solvePeriodStep
     End If
 
     'Modify each decision variable range to match current solve time period
@@ -54,9 +55,9 @@ For j = 1 To solvePeriods Step solvePeriodStep
         Set currRange = myVars.Areas(i)
         
         If solverVars Is Nothing Then
-            Set solverVars = currRange.Columns(j).Resize(, Step)
+            Set solverVars = currRange.Columns(j).Resize(, pStep)
         Else
-            Set solverVars = Union(solverVars, currRange.Columns(j).Resize(, Step))
+            Set solverVars = Union(solverVars, currRange.Columns(j).Resize(, pStep))
         End If
     Next i
     
@@ -69,8 +70,8 @@ For j = 1 To solvePeriods Step solvePeriodStep
     Dim relation As RelationConsts
     
     For k = 1 To consNum
-        Set newLHS = consLHS.Areas((k)).Columns(j).Resize(, Step)
-        Set newRHS = consRHS.Areas((k)).Columns(j).Resize(, Step)
+        Set newLHS = consLHS.Areas((k)).Columns(j).Resize(, pStep)
+        Set newRHS = consRHS.Areas((k)).Columns(j).Resize(, pStep)
         relation = OpenSolver.GetConstraintRel((k), SolverSheet)
         
         OpenSolver.UpdateConstraint (k), newLHS, relation, newRHS, Sheet:=SolverSheet
